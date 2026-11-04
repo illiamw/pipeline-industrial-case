@@ -3,7 +3,7 @@ bundle:
   name: databricks-pipeline-template
 
 include:
-  - resources/*.job.yml
+  - jobs/*.json
 
 targets:
   dev:

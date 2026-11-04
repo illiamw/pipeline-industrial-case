@@ -1,9 +1,0 @@
-resources:
-  jobs:
-    bronze_job:
-      name: bronze_job
-      tasks:
-        - task_key: create_bronze
-          spark_python_task:
-            python_file: ../notebooks/bronze/create_bronze.py
-            source: WORKSPACE
