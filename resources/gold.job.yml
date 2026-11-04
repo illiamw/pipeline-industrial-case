@@ -1,0 +1,21 @@
+resources:
+  jobs:
+    pp_industrial_gold:
+      name: pp_industrial_gold
+      trigger:
+        pause_status: UNPAUSED
+        table_update:
+          table_names:
+            - datapulse.silver.sensor_events
+      tasks:
+        - task_key: pp_industrial_gold
+          spark_python_task:
+            python_file: /notebooks/gold/build_features.py
+          environment_key: Default
+      queue:
+        enabled: true
+      environments:
+        - environment_key: Default
+          spec:
+            environment_version: "6"
+      performance_target: PERFORMANCE_OPTIMIZED

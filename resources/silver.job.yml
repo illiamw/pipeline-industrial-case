@@ -1,0 +1,21 @@
+resources:
+  jobs:
+    pp_industrial_silver:
+      name: pp_industrial_silver
+      trigger:
+        pause_status: UNPAUSED
+        table_update:
+          table_names:
+            - datapulse.bronze.sensor_events
+      tasks:
+        - task_key: pp_industrial_silver
+          spark_python_task:
+            python_file: /notebooks/silver/pre_process.py
+          environment_key: Default
+      queue:
+        enabled: true
+      environments:
+        - environment_key: Default
+          spec:
+            environment_version: "6"
+      performance_target: PERFORMANCE_OPTIMIZED
