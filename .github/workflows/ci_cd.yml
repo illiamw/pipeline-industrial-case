@@ -182,30 +182,9 @@ jobs:
           echo "=== AUTH CONFIGURATION ==="
           databricks auth describe || true
 
-
-      - name: Diagnose Databricks authentication
-        shell: bash
-        run: |
-          echo "=== CLI AUTH CONFIG ==="
-          databricks auth describe --host "$DATABRICKS_HOST" || true
-
-          echo "=== ENVIRONMENT CHECK ==="
-          echo "HOST: $DATABRICKS_HOST"
-          echo "TOKEN LENGTH: ${#DATABRICKS_TOKEN}"
-          echo "AUTH TYPE: $DATABRICKS_AUTH_TYPE"
-
-          echo "=== DIRECT API TEST ==="
-          curl -sS \
-            -o /tmp/databricks_response.json \
-            -w "HTTP STATUS: %{http_code}\n" \
-            -H "Authorization: Bearer $DATABRICKS_TOKEN" \
-            "$DATABRICKS_HOST/api/2.0/preview/scim/v2/Me"
-
-          cat /tmp/databricks_response.json
-
       # Authentication test
-      # - name: Test Databricks Authentication
-      #   run: databricks current-user me --profile default
+      - name: Test Databricks Authentication
+        run: databricks current-user me --profile default
 
       # Bundle validation
       - name: Validate Databricks Bundle
