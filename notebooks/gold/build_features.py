@@ -11,43 +11,43 @@ import pandas as pd
 
 
 def renomear_colunas(df: pd.DataFrame) -> pd.DataFrame:
-    """Adiciona dec_ somente às colunas especificadas."""
+    """
+    Padroniza a nomenclatura das colunas para compatibilidade
+    com o schema da tabela Delta.
 
-    colunas = [
-        "paradas_nao_planejadas",
-        "idade_maquina_anos",
-        "temperatura_c",
-        "pressao_bar",
-        "vibracao_motor_mm_s",
-        "velocidade_esteira_m_min",
-        "umidade_pct",
-        "tamanho_lote",
-        "tempo_setup_min",
-        "taxa_defeitos_pct",
-        "linha_producao_pad_A",
-        "linha_producao_pad_B",
-        "linha_producao_pad_C",
-        "turno_pad_manha",
-        "turno_pad_noite",
-        "turno_pad_tarde",
-        "maquina_M01",
-        "maquina_M02",
-        "maquina_M03",
-        "maquina_M04",
-        "maquina_M05",
-        "maquina_M06",
-        "maquina_M07",
-        "maquina_M08",
-        "consumo_energia_kwh",
-    ]
+    Regras:
+    - big_ -> dec_ para variáveis numéricas contínuas.
+    - str_ -> dec_ para variáveis dummy.
+    - Converte todos os nomes para minúsculas.
+    """
 
-    return df.rename(
-        columns={
-            coluna: f"dec_{coluna}"
-            for coluna in colunas
-            if coluna in df.columns
-        }
-    )
+    df = df.copy()
+
+    renomear = {
+        # Variáveis numéricas
+        "big_paradas_nao_planejadas": "dec_paradas_nao_planejadas",
+        "big_idade_maquina_anos": "dec_idade_maquina_anos",
+
+        # Linha de produção
+        "str_linha_producao_pad_A": "dec_linha_producao_pad_a",
+        "str_linha_producao_pad_B": "dec_linha_producao_pad_b",
+        "str_linha_producao_pad_C": "dec_linha_producao_pad_c",
+
+        # Turno
+        "str_turno_pad_manha": "dec_turno_pad_manha",
+        "str_turno_pad_noite": "dec_turno_pad_noite",
+        "str_turno_pad_tarde": "dec_turno_pad_tarde",
+
+        # Máquina
+        **{
+            f"str_maquina_M{i:02d}": f"dec_maquina_m{i:02d}"
+            for i in range(1, 9)
+        },
+    }
+
+    df = df.rename(columns=renomear)
+
+    return df
 
 def data_outliers(df: pd.DataFrame) -> pd.DataFrame:
     """
