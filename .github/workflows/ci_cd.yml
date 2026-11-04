@@ -167,9 +167,19 @@ jobs:
       - name: Install Databricks CLI
         uses: databricks/setup-cli@main
 
-      - name: Diagnose Databricks Authentication
+      - name: Inspect Databricks Authentication
         run: |
-          databricks auth describe
+          echo "=== ENVIRONMENT ==="
+          echo "HOST: $DATABRICKS_HOST"
+
+          echo "=== CREDENTIALS ==="
+          test -n "$DATABRICKS_TOKEN" && echo "TOKEN: PRESENT" || echo "TOKEN: MISSING"
+
+          echo "=== CLI VERSION ==="
+          databricks version
+
+          echo "=== AUTH CONFIGURATION ==="
+          databricks auth describe || true
 
       - name: Debug Environment Variables
         run: |
