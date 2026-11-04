@@ -189,22 +189,36 @@ jobs:
             echo "DATABRICKS_CLIENT_SECRET: MISSING"
           fi
 
-            # Credentials validation
-            - name: Check Databricks credentials
-              shell: bash
-              run: |
-                test -n "$DATABRICKS_HOST" || {
-                  echo "DATABRICKS_HOST is missing"
-                  exit 1
-                }
+      # Credentials validation
+      - name: Check Databricks credentials
+        shell: bash
+        run: |
+          test -n "$DATABRICKS_HOST" || {
+            echo "DATABRICKS_HOST is missing"
+            exit 1
+          }
 
-                test -n "$DATABRICKS_TOKEN" || {
-                  echo "DATABRICKS_TOKEN is missing"
-                  exit 1
-                }
+          test -n "$DATABRICKS_TOKEN" || {
+            echo "DATABRICKS_TOKEN is missing"
+            exit 1
+          }
 
       - name: List Environment Variables
         run: printenv | sort
+
+      - name: Debug Databricks Configuration
+        run: |
+          echo "========== DATABRICKS CONFIG =========="
+
+          echo "HOST: $DATABRICKS_HOST"
+
+          echo "TOKEN: $([ -n "$DATABRICKS_TOKEN" ] && echo CONFIGURED || echo MISSING)"
+
+          echo "CLIENT_ID: $([ -n "$DATABRICKS_CLIENT_ID" ] && echo CONFIGURED || echo MISSING)"
+
+          echo "CLIENT_SECRET: $([ -n "$DATABRICKS_CLIENT_SECRET" ] && echo CONFIGURED || echo MISSING)"
+
+          echo "======================================="
 
       # Authentication test
       - name: Test Databricks Authentication
