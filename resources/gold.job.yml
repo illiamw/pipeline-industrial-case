@@ -4,6 +4,6 @@ resources:
       name: gold_job
       tasks:
         - task_key: build_features
-          notebook_task:
-            notebook_path: ../notebooks/gold/build_features.py
+          spark_python_task:
+            python_file: ../notebooks/gold/build_features.py
             source: WORKSPACE

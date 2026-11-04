@@ -4,6 +4,6 @@ resources:
       name: bronze_job
       tasks:
         - task_key: create_bronze
-          notebook_task:
-            notebook_path: ../notebooks/bronze/create_bronze.py
+          spark_python_task:
+            python_file: ../notebooks/bronze/create_bronze.py
             source: WORKSPACE

@@ -4,6 +4,6 @@ resources:
       name: silver_job
       tasks:
         - task_key: pre_process
-          notebook_task:
-            notebook_path: ../notebooks/silver/pre_process.py
+          spark_python_task:
+            python_file: ../notebooks/silver/pre_process.py
             source: WORKSPACE
