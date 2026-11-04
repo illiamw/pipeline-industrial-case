@@ -6,6 +6,25 @@ import numpy as np
 from datetime import datetime
 from pyspark.sql import DataFrame as SparkDataFrame
 
+
+
+def corrigir_schema(df: pd.DataFrame) -> pd.DataFrame:
+    """Corrige os prefixos das colunas conforme o padrão de nomenclatura."""
+
+    renomear = {
+        "str_vibracao_motor_mm_s": "dec_vibracao_motor_mm_s",
+        "big_tamanho_lote": "dec_tamanho_lote",
+        "str_consumo_energia_kwh": "dec_consumo_energia_kwh",
+    }
+
+    return df.rename(
+        columns={
+            origem: destino
+            for origem, destino in renomear.items()
+            if origem in df.columns
+        }
+    )
+
 def padronizar_data(x):
 
     if pd.isna(x):
@@ -467,6 +486,8 @@ def main(df=None, table_name=None, spark_session = None) -> any:
 
     # Handle missing values
     df = data_missing_values(df)
+
+    df = corrigir_schema(df)
 
     if spark_session is None:
         df_spark = spark.createDataFrame(df)
