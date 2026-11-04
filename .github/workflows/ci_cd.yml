@@ -167,19 +167,44 @@ jobs:
       - name: Install Databricks CLI
         uses: databricks/setup-cli@main
 
-      # Credentials validation
-      - name: Check Databricks credentials
-        shell: bash
+      - name: Debug Environment Variables
         run: |
-          test -n "$DATABRICKS_HOST" || {
-            echo "DATABRICKS_HOST is missing"
-            exit 1
-          }
+          echo "DATABRICKS_HOST: $DATABRICKS_HOST"
 
-          test -n "$DATABRICKS_TOKEN" || {
-            echo "DATABRICKS_TOKEN is missing"
-            exit 1
-          }
+          if [ -n "$DATABRICKS_TOKEN" ]; then
+            echo "DATABRICKS_TOKEN: CONFIGURED"
+          else
+            echo "DATABRICKS_TOKEN: MISSING"
+          fi
+
+          if [ -n "$DATABRICKS_CLIENT_ID" ]; then
+            echo "DATABRICKS_CLIENT_ID: CONFIGURED"
+          else
+            echo "DATABRICKS_CLIENT_ID: MISSING"
+          fi
+
+          if [ -n "$DATABRICKS_CLIENT_SECRET" ]; then
+            echo "DATABRICKS_CLIENT_SECRET: CONFIGURED"
+          else
+            echo "DATABRICKS_CLIENT_SECRET: MISSING"
+          fi
+
+            # Credentials validation
+            - name: Check Databricks credentials
+              shell: bash
+              run: |
+                test -n "$DATABRICKS_HOST" || {
+                  echo "DATABRICKS_HOST is missing"
+                  exit 1
+                }
+
+                test -n "$DATABRICKS_TOKEN" || {
+                  echo "DATABRICKS_TOKEN is missing"
+                  exit 1
+                }
+
+      - name: List Environment Variables
+        run: printenv | sort
 
       # Authentication test
       - name: Test Databricks Authentication
@@ -194,5 +219,5 @@ jobs:
         run: databricks bundle deploy --target prod
 
 
-        
+
         
