@@ -28,6 +28,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Python setup
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -37,6 +38,7 @@ jobs:
             requirements.txt
             requirements-dev.txt
 
+      # Dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -108,10 +110,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Databricks CLI
       - name: Install Databricks CLI
         uses: databricks/setup-cli@main
 
+      # Credentials validation
       - name: Check Databricks credentials
+        shell: bash
         run: |
           test -n "$DATABRICKS_HOST" || {
             echo "DATABRICKS_HOST is missing"
@@ -123,17 +128,17 @@ jobs:
             exit 1
           }
 
-      - name: Validate Databricks Bundle
-        run: |
-          databricks bundle validate \
-            --target dev \
-            --var="databricks_host=${DATABRICKS_HOST}"
+      # Authentication test
+      - name: Test Databricks Authentication
+        run: databricks current-user me
 
+      # Bundle validation
+      - name: Validate Databricks Bundle
+        run: databricks bundle validate --target dev
+
+      # Deploy
       - name: Deploy Databricks Bundle
-        run: |
-          databricks bundle deploy \
-            --target dev \
-            --var="databricks_host=${DATABRICKS_HOST}"
+        run: databricks bundle deploy --target dev
 
 
   # =====================================================
@@ -158,10 +163,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Databricks CLI
       - name: Install Databricks CLI
         uses: databricks/setup-cli@main
 
+      # Credentials validation
       - name: Check Databricks credentials
+        shell: bash
         run: |
           test -n "$DATABRICKS_HOST" || {
             echo "DATABRICKS_HOST is missing"
@@ -173,14 +181,14 @@ jobs:
             exit 1
           }
 
-      - name: Validate Databricks Bundle
-        run: |
-          databricks bundle validate \
-            --target prod \
-            --var="databricks_host=${DATABRICKS_HOST}"
+      # Authentication test
+      - name: Test Databricks Authentication
+        run: databricks current-user me
 
+      # Bundle validation
+      - name: Validate Databricks Bundle
+        run: databricks bundle validate --target prod
+
+      # Deploy
       - name: Deploy Databricks Bundle
-        run: |
-          databricks bundle deploy \
-            --target prod \
-            --var="databricks_host=${DATABRICKS_HOST}"
+        run: databricks bundle deploy --target prod
