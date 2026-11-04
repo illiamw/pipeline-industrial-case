@@ -195,7 +195,7 @@ def data_missing_values(df: pd.DataFrame) -> pd.DataFrame:
     print("---------Registros Duplicados Após tratamento-------------")
     print(f"{'='*80}")
     print("Linhas idênticas: ", n_duplicatas)
-    n_duplicatas  = df['registro_id'].duplicated().sum()
+    n_duplicatas  = df['str_registro_id'].duplicated().sum()
     print("ID repetipo: ", n_duplicatas)
 
 
