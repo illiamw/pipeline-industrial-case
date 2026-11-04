@@ -182,27 +182,6 @@ jobs:
           echo "=== AUTH CONFIGURATION ==="
           databricks auth describe || true
 
-      - name: Debug Environment Variables
-        run: |
-          echo "DATABRICKS_HOST: $DATABRICKS_HOST"
-
-          if [ -n "$DATABRICKS_TOKEN" ]; then
-            echo "DATABRICKS_TOKEN: CONFIGURED"
-          else
-            echo "DATABRICKS_TOKEN: MISSING"
-          fi
-
-          if [ -n "$DATABRICKS_CLIENT_ID" ]; then
-            echo "DATABRICKS_CLIENT_ID: CONFIGURED"
-          else
-            echo "DATABRICKS_CLIENT_ID: MISSING"
-          fi
-
-          if [ -n "$DATABRICKS_CLIENT_SECRET" ]; then
-            echo "DATABRICKS_CLIENT_SECRET: CONFIGURED"
-          else
-            echo "DATABRICKS_CLIENT_SECRET: MISSING"
-          fi
 
       # Credentials validation
       - name: Check Databricks credentials
@@ -218,26 +197,10 @@ jobs:
             exit 1
           }
 
-      - name: List Environment Variables
-        run: printenv | sort
-
-      - name: Debug Databricks Configuration
-        run: |
-          echo "========== DATABRICKS CONFIG =========="
-
-          echo "HOST: $DATABRICKS_HOST"
-
-          echo "TOKEN: $([ -n "$DATABRICKS_TOKEN" ] && echo CONFIGURED || echo MISSING)"
-
-          echo "CLIENT_ID: $([ -n "$DATABRICKS_CLIENT_ID" ] && echo CONFIGURED || echo MISSING)"
-
-          echo "CLIENT_SECRET: $([ -n "$DATABRICKS_CLIENT_SECRET" ] && echo CONFIGURED || echo MISSING)"
-
-          echo "======================================="
 
       # Authentication test
       - name: Test Databricks Authentication
-        run: databricks current-user me
+        run: databricks current-user me --target prod
 
       # Bundle validation
       - name: Validate Databricks Bundle
