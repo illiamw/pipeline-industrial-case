@@ -1,0 +1,9 @@
+resources:
+  jobs:
+    bronze_job:
+      name: bronze_job
+      tasks:
+        - task_key: create_bronze
+          notebook_task:
+            notebook_path: ../notebooks/bronze/create_bronze.py
+            source: WORKSPACE

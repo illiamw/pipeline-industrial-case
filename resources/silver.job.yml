@@ -1,0 +1,17 @@
+resources:
+  jobs:
+    silver_job:
+      name: silver_job
+      tasks:
+        - task_key: clean_data
+          notebook_task:
+            notebook_path: ../notebooks/silver/clean_data.py
+            source: WORKSPACE
+        - task_key: validate_data
+          notebook_task:
+            notebook_path: ../notebooks/silver/validate_data.py
+            source: WORKSPACE
+        - task_key: transform_data
+          notebook_task:
+            notebook_path: ../notebooks/silver/transform_data.py
+            source: WORKSPACE

@@ -1,0 +1,13 @@
+resources:
+  jobs:
+    gold_job:
+      name: gold_job
+      tasks:
+        - task_key: create_aggregations
+          notebook_task:
+            notebook_path: ../notebooks/gold/create_aggregations.py
+            source: WORKSPACE
+        - task_key: create_business_tables
+          notebook_task:
+            notebook_path: ../notebooks/gold/create_business_tables.py
+            source: WORKSPACE
