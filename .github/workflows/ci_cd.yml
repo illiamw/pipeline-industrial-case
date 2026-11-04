@@ -167,6 +167,10 @@ jobs:
       - name: Install Databricks CLI
         uses: databricks/setup-cli@main
 
+      - name: Diagnose Databricks Authentication
+        run: |
+          databricks auth describe
+
       - name: Debug Environment Variables
         run: |
           echo "DATABRICKS_HOST: $DATABRICKS_HOST"
