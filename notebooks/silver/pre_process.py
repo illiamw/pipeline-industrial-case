@@ -36,30 +36,30 @@ def typing_data(df ,file_path: str) -> pd.DataFrame:
     Corrects data types in the dataset.
     """
 
-    df["vibracao_motor_mm_s"] = pd.to_numeric(
-    df["vibracao_motor_mm_s"],
+    df["str_vibracao_motor_mm_s"] = pd.to_numeric(
+    df["str_vibracao_motor_mm_s"],
     errors="coerce"
     ).astype(float)
 
 
-    df["consumo_energia_kwh"] = pd.to_numeric(
-        df["consumo_energia_kwh"],
+    df["str_consumo_energia_kwh"] = pd.to_numeric(
+        df["str_consumo_energia_kwh"],
         errors="coerce"
     ).astype(float)
 
 
-    df["data_registro"] = (
-        df["data_registro"]
+    df["str_data_registro"] = (
+        df["str_data_registro"]
         .apply(padronizar_data)
     )
 
-    df["data_registro_pad"] = pd.to_datetime(
-        df["data_registro"],
+    df["ts_data_registro_pad"] = pd.to_datetime(
+        df["str_data_registro"],
         format="%Y/%m/%d %H:%M:%S",
         errors="coerce"
     )
 
-    df = df.drop(columns=["data_registro"])
+    df = df.drop(columns=["str_data_registro"])
 
     print(f"\n{'='*80}")
     print("---------Padronizando unidades de medida-------------")
@@ -67,18 +67,18 @@ def typing_data(df ,file_path: str) -> pd.DataFrame:
 
     # TODO 4: criar temperatura_c
 
-    df["temperatura_c"] = np.where(
-        df["unidade_temperatura"] == "F",
-        (df["temperatura_valor"] - 32) * 5 / 9,
-        df["temperatura_valor"]
+    df["dec_temperatura_c"] = np.where(
+        df["str_unidade_temperatura"] == "F",
+        (df["dec_temperatura"] - 32) * 5 / 9,
+        df["dec_temperatura"]
     )
 
     # TODO 5: criar pressao_bar
 
-    df["pressao_bar"] = np.where(
-        df["unidade_pressao"] == "psi",
-        df["pressao_valor"] / 14.5038,
-        df["pressao_valor"]
+    df["dec_pressao_bar"] = np.where(
+        df["str_unidade_pressao"] == "psi",
+        df["dec_pressao"] / 14.5038,
+        df["dec_pressao"]
     )
     # TODO 6: verificar as primeiras linhas após as conversões
     print(f"\n{'='*80}")
@@ -86,10 +86,10 @@ def typing_data(df ,file_path: str) -> pd.DataFrame:
     print(f"{'='*80}")
 
     df = df.drop(columns=[
-        "temperatura_valor",
-        "pressao_valor",
-        "unidade_temperatura",
-        "unidade_pressao"
+        "dec_temperatura",
+        "dec_pressao",
+        "str_unidade_temperatura",
+        "str_unidade_pressao"
     ])
     
     return df
@@ -139,25 +139,25 @@ def categorical_data_cleaning(df: pd.DataFrame) -> pd.DataFrame:
     # TODO 2: aplicar os mapas
 
     # Corrigir linha_producao
-    df["linha_producao_pad"] = (
-        df["linha_producao"]
+    df["str_linha_producao_pad"] = (
+        df["str_linha_producao"]
         .replace(mapa_linha)
     )
 
     # Corrigir turno
-    df["turno_pad"] = (
-        df["turno"]
+    df["str_turno_pad"] = (
+        df["str_turno"]
         .replace(mapa_turno)
     )
 
     # Corrigir Maquina
-    df["maquina"] = df["maquina"].replace(
+    df["str_maquina"] = df["str_maquina"].replace(
         "M-erro",
         "desconhecido"
     )
 
     # TODO 3: tratar valores não mapeados
-    colunas = ["linha_producao_pad", "turno_pad"]
+    colunas = ["str_linha_producao_pad", "str_turno_pad"]
 
     for col in colunas:
         moda = df[col].mode().iloc[0]
@@ -168,12 +168,12 @@ def categorical_data_cleaning(df: pd.DataFrame) -> pd.DataFrame:
 
 
     df = df.drop(columns=[
-        "turno",
-        "linha_producao"
+        "str_turno",
+        "str_linha_producao"
     ])
 
     df = df[
-        df["maquina"] != "desconhecido"
+        df["str_maquina"] != "desconhecido"
     ]
 
     return df
@@ -224,75 +224,75 @@ def data_missing_values(df: pd.DataFrame) -> pd.DataFrame:
     regras = {
 
         # Idade da máquina
-        "idade_maquina_anos": (
-            (df["idade_maquina_anos"] >= 0) &
-            (df["idade_maquina_anos"] <= 100),
+        "big_idade_maquina_anos": (
+            (df["big_idade_maquina_anos"] >= 0) &
+            (df["big_idade_maquina_anos"] <= 100),
             "0 <= idade_maquina_anos <= 100"
         ),
 
         # Temperatura
-        "temperatura_c": (
+        "dec_temperatura_c": (
             (
                 (
-                df["temperatura_c"].between(-273.15, 2000))
+                df["dec_temperatura_c"].between(-273.15, 2000))
             ),
             "Temperatura acima do zero absoluto"
         ),
 
         # Pressão
-        "pressao_bar": (
-            (df["pressao_bar"] >= 0),
+        "dec_pressao_bar": (
+            (df["dec_pressao_bar"] >= 0),
             "pressao_bar >= 0"
         ),
 
         # Vibração
-        "vibracao_motor_mm_s": (
-            (df["vibracao_motor_mm_s"] >= 0),
+        "str_vibracao_motor_mm_s": (
+            (df["str_vibracao_motor_mm_s"] >= 0),
             "0 <= vibracao_motor_mm_s"
         ),
 
         # Velocidade da esteira
-        "velocidade_esteira_m_min": (
-            (df["velocidade_esteira_m_min"] >= 0) ,
+        "dec_velocidade_esteira_m_min": (
+            (df["dec_velocidade_esteira_m_min"] >= 0) ,
             "0 <= velocidade_esteira_m_min"
         ),
 
         # Umidade
-        "umidade_pct": (
-            (df["umidade_pct"] >= 0) &
-            (df["umidade_pct"] <= 100),
+        "dec_umidade_pct": (
+            (df["dec_umidade_pct"] >= 0) &
+            (df["dec_umidade_pct"] <= 100),
             "0 <= umidade_pct <= 100"
         ),
 
         # Tamanho do lote
-        "tamanho_lote": (
-            (df["tamanho_lote"] > 0),
+        "big_tamanho_lote": (
+            (df["big_tamanho_lote"] > 0),
             "tamanho_lote > 0"
         ),
 
 
         # Taxa de defeitos
-        "taxa_defeitos_pct": (
-            (df["taxa_defeitos_pct"] >= 0) &
-            (df["taxa_defeitos_pct"] <= 100),
+        "dec_taxa_defeitos_pct": (
+            (df["dec_taxa_defeitos_pct"] >= 0) &
+            (df["dec_taxa_defeitos_pct"] <= 100),
             "0 <= taxa_defeitos_pct <= 100"
         ),
 
         # Energia sensor
-        "energia_sensor_b_kwh": (
-            (df["energia_sensor_b_kwh"] >= 0),
+        "dec_energia_sensor_b_kwh": (
+            (df["dec_energia_sensor_b_kwh"] >= 0),
             "energia_sensor_b_kwh >= 0"
         ),
 
         # Consumo energia
-        "consumo_energia_kwh": (
-            (df["consumo_energia_kwh"] >= 0),
+        "str_consumo_energia_kwh": (
+            (df["str_consumo_energia_kwh"] >= 0),
             "consumo_energia_kwh >= 0"
         ),
 
         # Falha binária
-        "falha_24h": (
-            df["falha_24h"].isin([0, 1]),
+        "big_falha_24h": (
+            df["big_falha_24h"].isin([0, 1]),
             "falha_24h deve ser 0 ou 1"
         )
     }
@@ -344,12 +344,12 @@ def data_missing_values(df: pd.DataFrame) -> pd.DataFrame:
 
     # Lista das colunas numéricas
     colunas = [
-        "vibracao_motor_mm_s",
-        "consumo_energia_kwh",
-        "umidade_pct",
-        "pressao_bar",
-        "velocidade_esteira_m_min",
-        "temperatura_c"
+        "str_vibracao_motor_mm_s",
+        "str_consumo_energia_kwh",
+        "dec_umidade_pct",
+        "dec_pressao_bar",
+        "dec_velocidade_esteira_m_min",
+        "dec_temperatura_c"
     ]
 
     def check_distribuicao(df,colunas):
@@ -413,9 +413,9 @@ def data_missing_values(df: pd.DataFrame) -> pd.DataFrame:
     check_distribuicao(df,colunas)
 
     colunas = [
-        "vibracao_motor_mm_s",
-        "consumo_energia_kwh",
-        "temperatura_c"
+        "str_vibracao_motor_mm_s",
+        "str_consumo_energia_kwh",
+        "dec_temperatura_c"
     ]
 
     for col in colunas:
@@ -424,9 +424,9 @@ def data_missing_values(df: pd.DataFrame) -> pd.DataFrame:
         )
 
     colunas = [
-        "umidade_pct",
-        "pressao_bar",
-        "velocidade_esteira_m_min"
+        "dec_umidade_pct",
+        "dec_pressao_bar",
+        "dec_velocidade_esteira_m_min"
     ]
 
     for col in colunas:
@@ -443,7 +443,7 @@ def data_missing_values(df: pd.DataFrame) -> pd.DataFrame:
 
     # TODO 5: decidir quais linhas remover, se necessário
     df = df[
-        df["tamanho_lote"] > 0
+        df["big_tamanho_lote"] > 0
     ]
 
 

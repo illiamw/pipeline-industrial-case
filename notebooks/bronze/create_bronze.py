@@ -129,57 +129,57 @@ def gerate_data(file_path: str) -> pd.DataFrame:
 
     # Montagem do DataFrame bruto
     dados_raw = pd.DataFrame({
-        "registro_id": [f"REG-{i:05d}" for i in range(n)],
-        "data_registro": data_registro,
-        "linha_producao": linha_raw,
-        "turno": turno_raw,
-        "maquina": maquina_limpa,
-        "idade_maquina_anos": idade_maquina_anos,
-        "temperatura_valor": np.round(temperatura_valor, 2),
-        "unidade_temperatura": unidade_temperatura,
-        "pressao_valor": np.round(pressao_valor, 3),
-        "unidade_pressao": unidade_pressao,
-        "vibracao_motor_mm_s": np.round(vibracao_mm_s_real, 3),
-        "velocidade_esteira_m_min": np.round(velocidade_esteira_real, 2),
-        "umidade_pct": np.round(umidade_pct_real, 2),
-        "tamanho_lote": tamanho_lote_real,
-        "tempo_setup_min": np.round(tempo_setup_min_real, 2),
-        "paradas_nao_planejadas": paradas_nao_planejadas_real,
-        "taxa_defeitos_pct": np.round(taxa_defeitos_pct_real, 3),
-        "energia_sensor_b_kwh": np.round(consumo_energia_real * 1.015 + rng.normal(0, 8, size=n), 2),
-        "codigo_campanha": rng.choice(["A12", "B07", "C99", "X00"], size=n),
-        "ruido_aleatorio": rng.normal(0, 1, size=n),
-        "consumo_energia_kwh": np.round(consumo_energia_real, 2),
-        "falha_24h": falha_24h
+        "str_registro_id": [f"REG-{i:05d}" for i in range(n)],
+        "str_data_registro": data_registro,
+        "str_linha_producao": linha_raw,
+        "str_turno": turno_raw,
+        "str_maquina": maquina_limpa,
+        "big_idade_maquina_anos": idade_maquina_anos,
+        "dec_temperatura": np.round(temperatura_valor, 2),
+        "str_unidade_temperatura": unidade_temperatura,
+        "dec_pressao": np.round(pressao_valor, 3),
+        "str_unidade_pressao": unidade_pressao,
+        "str_vibracao_motor_mm_s": np.round(vibracao_mm_s_real, 3),
+        "dec_velocidade_esteira_m_min": np.round(velocidade_esteira_real, 2),
+        "dec_umidade_pct": np.round(umidade_pct_real, 2),
+        "big_tamanho_lote": tamanho_lote_real,
+        "dec_tempo_setup_min": np.round(tempo_setup_min_real, 2),
+        "big_paradas_nao_planejadas": paradas_nao_planejadas_real,
+        "dec_taxa_defeitos_pct": np.round(taxa_defeitos_pct_real, 3),
+        "dec_energia_sensor_b_kwh": np.round(consumo_energia_real * 1.015 + rng.normal(0, 8, size=n), 2),
+        "str_codigo_campanha": rng.choice(["A12", "B07", "C99", "X00"], size=n),
+        "dec_ruido_aleatorio": rng.normal(0, 1, size=n),
+        "str_consumo_energia_kwh": np.round(consumo_energia_real, 2),
+        "big_falha_24h": falha_24h
     })
 
     # Converter colunas selecionadas para object antes de inserir textos com vírgula decimal
-    dados_raw["consumo_energia_kwh"] = dados_raw["consumo_energia_kwh"].astype(object)
-    dados_raw["vibracao_motor_mm_s"] = dados_raw["vibracao_motor_mm_s"].astype(object)
+    dados_raw["str_consumo_energia_kwh"] = dados_raw["str_consumo_energia_kwh"].astype(object)
+    dados_raw["str_vibracao_motor_mm_s"] = dados_raw["str_vibracao_motor_mm_s"].astype(object)
 
     # Transformar parte dos números em textos com vírgula decimal
     idx_consumo_texto = rng.choice(dados_raw.index, size=80, replace=False)
-    dados_raw.loc[idx_consumo_texto, "consumo_energia_kwh"] = (
-        dados_raw.loc[idx_consumo_texto, "consumo_energia_kwh"]
+    dados_raw.loc[idx_consumo_texto, "str_consumo_energia_kwh"] = (
+        dados_raw.loc[idx_consumo_texto, "str_consumo_energia_kwh"]
         .map(lambda x: f"{float(x):.2f}".replace(".", ","))
     )
 
     idx_vibracao_texto = rng.choice(dados_raw.index, size=55, replace=False)
-    dados_raw.loc[idx_vibracao_texto, "vibracao_motor_mm_s"] = (
-        dados_raw.loc[idx_vibracao_texto, "vibracao_motor_mm_s"]
+    dados_raw.loc[idx_vibracao_texto, "str_vibracao_motor_mm_s"] = (
+        dados_raw.loc[idx_vibracao_texto, "str_vibracao_motor_mm_s"]
         .map(lambda x: f"{float(x):.3f}".replace(".", ","))
     )
 
     # Inserir categorias inválidas
     idx_cat = rng.choice(dados_raw.index, size=30, replace=False)
-    dados_raw.loc[idx_cat[:10], "linha_producao"] = "?"
-    dados_raw.loc[idx_cat[10:20], "turno"] = "sem_info"
-    dados_raw.loc[idx_cat[20:], "maquina"] = "M-erro"
+    dados_raw.loc[idx_cat[:10], "str_linha_producao"] = "?"
+    dados_raw.loc[idx_cat[10:20], "str_turno"] = "sem_info"
+    dados_raw.loc[idx_cat[20:], "str_maquina"] = "M-erro"
 
     # Inserir valores ausentes
     cols_missing = [
-        "temperatura_valor", "pressao_valor", "vibracao_motor_mm_s",
-        "velocidade_esteira_m_min", "umidade_pct", "turno", "linha_producao"
+        "dec_temperatura", "dec_pressao", "str_vibracao_motor_mm_s",
+        "dec_velocidade_esteira_m_min", "dec_umidade_pct", "str_turno", "str_linha_producao"
     ]
     for col in cols_missing:
         idx_nan = rng.choice(dados_raw.index, size=int(0.035 * n), replace=False)
@@ -187,31 +187,31 @@ def gerate_data(file_path: str) -> pd.DataFrame:
 
     # Inserir valores fisicamente impossíveis
     idx_bad = rng.choice(dados_raw.index, size=32, replace=False)
-    dados_raw.loc[idx_bad[:6], "temperatura_valor"] = -50
-    dados_raw.loc[idx_bad[6:12], "pressao_valor"] = -3
-    dados_raw.loc[idx_bad[12:18], "vibracao_motor_mm_s"] = -1
-    dados_raw.loc[idx_bad[18:24], "umidade_pct"] = 140
-    dados_raw.loc[idx_bad[24:28], "velocidade_esteira_m_min"] = -20
-    dados_raw.loc[idx_bad[28:], "tamanho_lote"] = 0
+    dados_raw.loc[idx_bad[:6], "dec_temperatura"] = -50
+    dados_raw.loc[idx_bad[6:12], "dec_pressao"] = -3
+    dados_raw.loc[idx_bad[12:18], "str_vibracao_motor_mm_s"] = -1
+    dados_raw.loc[idx_bad[18:24], "dec_umidade_pct"] = 140
+    dados_raw.loc[idx_bad[24:28], "dec_velocidade_esteira_m_min"] = -20
+    dados_raw.loc[idx_bad[28:], "big_tamanho_lote"] = 0
 
     # Inserir outliers extremos plausíveis ou suspeitos
     idx_out = rng.choice(dados_raw.index, size=18, replace=False)
-    dados_raw.loc[idx_out[:6], "consumo_energia_kwh"] = (
+    dados_raw.loc[idx_out[:6], "str_consumo_energia_kwh"] = (
         pd.to_numeric(
-            dados_raw.loc[idx_out[:6], "consumo_energia_kwh"].astype(str).str.replace(",", ".", regex=False),
+            dados_raw.loc[idx_out[:6], "str_consumo_energia_kwh"].astype(str).str.replace(",", ".", regex=False),
             errors="coerce"
         ) * 2.7
     )
-    dados_raw.loc[idx_out[6:12], "vibracao_motor_mm_s"] = 12 + rng.normal(0, 1, size=6)
-    dados_raw.loc[idx_out[12:], "tempo_setup_min"] = 240 + rng.normal(0, 10, size=6)
+    dados_raw.loc[idx_out[6:12], "str_vibracao_motor_mm_s"] = 12 + rng.normal(0, 1, size=6)
+    dados_raw.loc[idx_out[12:], "dec_tempo_setup_min"] = 240 + rng.normal(0, 10, size=6)
 
     # Inserir alguns registros duplicados
     duplicatas = dados_raw.sample(35, random_state=RANDOM_STATE)
     dados_raw = pd.concat([dados_raw, duplicatas], ignore_index=True)
 
     # Garantir tipo consistente para colunas mistas (string + número) antes da conversão Arrow
-    dados_raw["consumo_energia_kwh"] = dados_raw["consumo_energia_kwh"].astype(str)
-    dados_raw["vibracao_motor_mm_s"] = dados_raw["vibracao_motor_mm_s"].astype(str)
+    dados_raw["str_consumo_energia_kwh"] = dados_raw["str_consumo_energia_kwh"].astype(str)
+    dados_raw["str_vibracao_motor_mm_s"] = dados_raw["str_vibracao_motor_mm_s"].astype(str)
 
     df_spark = spark.createDataFrame(dados_raw)
 

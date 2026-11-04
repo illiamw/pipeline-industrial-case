@@ -7,6 +7,48 @@ from pathlib import Path
 import numpy as np
 from pyspark.sql import DataFrame as SparkDataFrame
 
+import pandas as pd
+
+
+def renomear_colunas(df: pd.DataFrame) -> pd.DataFrame:
+    """Adiciona dec_ somente às colunas especificadas."""
+
+    colunas = [
+        "paradas_nao_planejadas",
+        "idade_maquina_anos",
+        "temperatura_c",
+        "pressao_bar",
+        "vibracao_motor_mm_s",
+        "velocidade_esteira_m_min",
+        "umidade_pct",
+        "tamanho_lote",
+        "tempo_setup_min",
+        "taxa_defeitos_pct",
+        "linha_producao_pad_A",
+        "linha_producao_pad_B",
+        "linha_producao_pad_C",
+        "turno_pad_manha",
+        "turno_pad_noite",
+        "turno_pad_tarde",
+        "maquina_M01",
+        "maquina_M02",
+        "maquina_M03",
+        "maquina_M04",
+        "maquina_M05",
+        "maquina_M06",
+        "maquina_M07",
+        "maquina_M08",
+        "consumo_energia_kwh",
+    ]
+
+    return df.rename(
+        columns={
+            coluna: f"dec_{coluna}"
+            for coluna in colunas
+            if coluna in df.columns
+        }
+    )
+
 def data_outliers(df: pd.DataFrame) -> pd.DataFrame:
     """
     Identifies and removes outliers from the dataset.
@@ -26,11 +68,11 @@ def data_outliers(df: pd.DataFrame) -> pd.DataFrame:
     print(f"{'='*80}")
 
     variaveis_outlier = [
-        "consumo_energia_kwh",
-        "vibracao_motor_mm_s",
-        "tempo_setup_min",
-        "temperatura_c",
-        "pressao_bar"
+        "dec_consumo_energia_kwh",
+        "dec_vibracao_motor_mm_s",
+        "dec_tempo_setup_min",
+        "dec_temperatura_c",
+        "dec_pressao_bar"
     ]
 
     # TODO 2: criar uma função para calcular limites por IQR
@@ -113,10 +155,10 @@ def data_colinearity(df: pd.DataFrame) -> pd.DataFrame:
 
     # TODO 3: decidir colunas a remover
     colunas_remover = [
-        "registro_id",
-        "codigo_campanha",
-        "ruido_aleatorio",
-        "energia_sensor_b_kwh"
+        "str_registro_id",
+        "str_codigo_campanha",
+        "dec_ruido_aleatorio",
+        "dec_energia_sensor_b_kwh"
     ]
 
 
@@ -154,9 +196,9 @@ def data_symbolic_to_numeric(df: pd.DataFrame) -> pd.DataFrame:
 
     # Variáveis categóricas
     variaveis_categoricas = [
-        "linha_producao_pad",
-        "turno_pad",
-        "maquina"
+        "str_linha_producao_pad",
+        "str_turno_pad",
+        "str_maquina"
     ]
 
     # Pipeline para categóricas
@@ -241,33 +283,33 @@ def data_numeric_to_numeric(df: pd.DataFrame) -> pd.DataFrame:
 
     # Sugestão de colunas numéricas
     colunas_numericas = [
-        "idade_maquina_anos",
-        "temperatura_c",
-        "pressao_bar",
-        "vibracao_motor_mm_s",
-        "velocidade_esteira_m_min",
-        "umidade_pct",
-        "tamanho_lote",
-        "tempo_setup_min",
-        "paradas_nao_planejadas",
-        "taxa_defeitos_pct"
+        "big_idade_maquina_anos",
+        "dec_temperatura_c",
+        "dec_pressao_bar",
+        "dec_vibracao_motor_mm_s",
+        "dec_velocidade_esteira_m_min",
+        "dec_umidade_pct",
+        "dec_tamanho_lote",
+        "dec_tempo_setup_min",
+        "big_paradas_nao_planejadas",
+        "dec_taxa_defeitos_pct"
     ]
 
 
     # Variável para transformação logarítmica
-    coluna_log = ["paradas_nao_planejadas"]
+    coluna_log = ["big_paradas_nao_planejadas"]
 
     # Variáveis para StandardScaler
     colunas_standard = [
-        "idade_maquina_anos",
-        "temperatura_c",
-        "pressao_bar",
-        "vibracao_motor_mm_s",
-        "velocidade_esteira_m_min",
-        "umidade_pct",
-        "tamanho_lote",
-        "tempo_setup_min",
-        "taxa_defeitos_pct"
+        "big_idade_maquina_anos",
+        "dec_temperatura_c",
+        "dec_pressao_bar",
+        "dec_vibracao_motor_mm_s",
+        "dec_velocidade_esteira_m_min",
+        "dec_umidade_pct",
+        "dec_tamanho_lote",
+        "dec_tempo_setup_min",
+        "dec_taxa_defeitos_pct"
     ]
 
     # Pipeline logarítmico
@@ -335,6 +377,7 @@ def main(df=None, table_name=None, spark_session = None) -> any:
     df = data_colinearity(df)
     df = data_symbolic_to_numeric(df)
     df = data_numeric_to_numeric(df)
+    df = renomear_colunas(df)
 
     if spark_session is None:
         df_spark = spark.createDataFrame(df)
