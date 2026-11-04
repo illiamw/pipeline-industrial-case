@@ -117,14 +117,15 @@ jobs:
       - name: Install Databricks CLI
         uses: databricks/setup-cli@main
 
-      - name: Validate bundle
-        run: |
-          databricks bundle validate \
-            --target prod \
-            --var="databricks_host=${DATABRICKS_HOST}"
+      - name: Validate Databricks Bundle
+        env:
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: databricks bundle validate -t prod
 
-      - name: Deploy to Databricks
-        run: |
-          databricks bundle deploy \
-            --target prod \
-            --var="databricks_host=${DATABRICKS_HOST}"
+      - name: Deploy Databricks Bundle
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: databricks bundle deploy -t prod
