@@ -215,7 +215,7 @@ def gerate_data(file_path: str) -> pd.DataFrame:
 
     df_spark = spark.createDataFrame(dados_raw)
 
-    df_spark.write.format("delta").mode("append").saveAsTable(file_path)
+    df_spark.write.format("delta").mode("overwrite").saveAsTable(file_path)
 
 
 def main(file_path):

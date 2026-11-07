@@ -384,7 +384,7 @@ def main(df=None, table_name=None, spark_session = None) -> any:
     else:
         df_spark = spark_session.createDataFrame(df)
 
-    df_spark.write.format("delta").mode("append").saveAsTable("datapulse.gold."+table_name)
+    df_spark.write.format("delta").mode("overwrite").saveAsTable("datapulse.gold."+table_name)
 
     return df_spark
 
