@@ -22,7 +22,7 @@ def gerate_data(file_path: str) -> pd.DataFrame:
     # ------------------------------------------------------------
 
     rng = np.random.default_rng(RANDOM_STATE)
-    n = 1200
+    n = 10000
 
     # Variáveis estruturais limpas, usadas internamente para gerar os dados
     datas = pd.date_range("2025-01-01 00:00:00", periods=n, freq="6h")
